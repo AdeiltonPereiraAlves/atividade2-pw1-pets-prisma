@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Petshop {
+  id  String @id @default(uuid())
+  name String
+  cnpj String @unique
+  pets Pet[]
+
+}
+
+model Pet{
+  id String @id @default(uuid())
+  name String 
+  type String
+  description String
+  vaccinated Boolean @default(false)
+  deadlene_vaccination DateTime
+  created_at DateTime @default(now())
+  petshopId String
+  petshop Petshop @relation(fields: [petshopId], references: [id])
+}
