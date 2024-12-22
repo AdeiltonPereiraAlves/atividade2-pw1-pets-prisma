@@ -13,8 +13,12 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       const petshopPets = await this.prismaDb.petshop.findUnique({
         where: { cnpj: cnpj },
         include: { pets: true },
-      });
 
+      });
+      if (!petshopPets) {
+        throw new Error(`Nenhum petshop encontrado com o CNPJ: ${cnpj}`);
+      }
+      const id= petshopPets.id 
       console.log(petshopPets, "petshopPets");
      let {
         name,
@@ -31,7 +35,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         vaccinated,
         deadline_vaccination,
         created_at,
-        petshopId: petshopPets.id,
+        petshopId: id,
       });
       const deadlineDate = new Date(deadline_vaccination);
       
