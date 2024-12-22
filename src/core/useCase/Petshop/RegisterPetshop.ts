@@ -1,11 +1,12 @@
 import Petshop from "../../model/Petshop";
 import PetshopPort from "../../ports/PetshopPort";
+import PetshopPrismaPort from "../../ports/PetshopPrismaPort";
 
 export default class RegisterPetshop{
-    constructor(private petshopDb: PetshopPort){
+    constructor(private petshopDb: PetshopPrismaPort){
 
     }
-    execute(petshop: Petshop){
+    execute(petshop: Partial<Petshop>){
        return this.petshopDb.insert(petshop)
     }
 

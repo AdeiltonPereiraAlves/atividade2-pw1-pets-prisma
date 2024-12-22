@@ -24,7 +24,7 @@ model Pet{
   type String
   description String
   vaccinated Boolean @default(false)
-  deadlene_vaccination DateTime
+  deadline_vaccination DateTime
   created_at DateTime @default(now())
   petshopId String
   petshop Petshop @relation(fields: [petshopId], references: [id])
