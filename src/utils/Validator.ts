@@ -1,6 +1,6 @@
 import arrayPetshop from "../adapters/db/ArrayPetshop";
 
-export default class Validador {
+export default class Validator {
   static validateCnpj(cnpj: string): boolean {
     const regex: RegExp = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
     return regex.test(cnpj);

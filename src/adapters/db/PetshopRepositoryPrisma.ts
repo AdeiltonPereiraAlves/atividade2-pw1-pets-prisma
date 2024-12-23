@@ -8,6 +8,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   constructor() {
     this.prismaDb = new PrismaClient();
   }
+
   async seachPetshop(cnpj: string) {
     const petshop = await this.prismaDb.petshop.findUnique({
       where: { cnpj: cnpj },
@@ -107,4 +108,14 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
      }
 
   }
+  
+  async editPet( idPet:string,dataUpDate:Partial<Pet>){
+      try {
+        const editePet = await this.prismaDb.pet.update({where: {id: idPet}, data: dataUpDate})
+        return editePet
+      } catch (error) {
+        throw new Error("erro peditar pets");
+      }
+  }
+ 
 }
