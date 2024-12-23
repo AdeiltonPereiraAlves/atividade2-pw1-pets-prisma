@@ -8,12 +8,19 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   constructor() {
     this.prismaDb = new PrismaClient();
   }
-  async alterVaccinated( id: string, vaccinated: boolean):Promise<Pet| any> {
+  deletePet(cnpj: string, id: string): Pet[] {
     try {
-      const pet:Pet =  await this.prismaDb.pet.update({where: {id: id}, data: {vaccinated}})
-      return pet
+    } catch (error) {}
+    throw new Error("Method not implemented.");
+  }
+  async alterVaccinated(id: string, vaccinated: boolean): Promise<Pet | any> {
+    try {
+      const pet: Pet = await this.prismaDb.pet.update({
+        where: { id: id },
+        data: { vaccinated },
+      });
+      return pet;
     } catch (error) {
-      
       throw new Error("Erro ao mudar vaccinated para true.");
     }
   }
@@ -29,9 +36,8 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
     return petshop;
   }
   async insertPet(cnpj: string, pet: any): Promise<Pet | any> {
-  
     try {
-       const existsPetshop = await this.seachPetshop(cnpj)
+      const existsPetshop = await this.seachPetshop(cnpj);
       const id = existsPetshop.id;
       console.log(existsPetshop, "existpetshop");
       let {
@@ -42,7 +48,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         deadline_vaccination,
         created_at,
       } = pet;
-     
+
       const deadlineDate = new Date(deadline_vaccination);
 
       if (existsPetshop) {
@@ -56,11 +62,10 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
             vaccinated,
             deadline_vaccination: deadlineDate,
             created_at,
-            petshopId:id,
+            petshopId: id,
           },
         });
 
-        
         return newPet;
       } else {
         throw new Error("Não exite esse petshop");
@@ -102,29 +107,53 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro ao criar petShop");
     }
   }
-  async seachPets(id: string){
-     try {
-       
-      const pets= await this.prismaDb.pet.findMany({where: {petshopId: id}})
-     
-      console.log(pets)
-      
-        return pets
-      
-     } catch (error) {
+  async seachPets(id: string) {
+    try {
+      const pets = await this.prismaDb.pet.findMany({
+        where: { petshopId: id },
+      });
+
+      console.log(pets);
+
+      return pets;
+    } catch (error) {
       console.log(error);
       throw new Error("erro procurar pets");
-     }
+    }
+  }
+  async seachPetId(pets: Pet[], id: string) {
+    try {
+      const petFound = pets.filter((pet: Pet) => pet.id === id);
+      return petFound;
+    } catch (error) {
+      throw new Error("Pet não encontrado");
+    }
+  }
 
-  }
-  
-  async editPet( idPet:string,dataUpDate:Partial<Pet>){
-      try {
-        const editePet = await this.prismaDb.pet.update({where: {id: idPet}, data: dataUpDate})
-        return editePet
-      } catch (error) {
-        throw new Error("erro peditar pets");
+  async editPet(cnpj: string, idPet: string, dataUpDate: Partial<Pet>) {
+    try {
+     
+      const petshop = await this.seachPetshop(cnpj);
+      if (!petshop) {
+        throw new Error("erro editar pets");
       }
+      const idPetShop = petshop.id;
+      if (!idPetShop) {
+        throw new Error("erro procurar pets");
+      }
+      console.log(petshop, idPet, "id e petshop no banco");
+      const editePet = await this.prismaDb.pet.updateMany({
+        where: { id: idPet, petshopId: idPetShop },
+        data: dataUpDate,
+      });
+      if (editePet) {
+        const pets = await this.seachPets(idPetShop);
+        const newPet = await this.seachPetId(pets, idPet);
+        return newPet;
+      }
+     
+    } catch (error) {
+      throw new Error("erro peditar pets");
+    }
   }
-  
 }

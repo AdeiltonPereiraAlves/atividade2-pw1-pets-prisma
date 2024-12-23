@@ -4,7 +4,7 @@ import PetshopPrismaPort from "../../ports/PetshopPrismaPort";
 
 export default class EditPet{
     constructor(private petDB: PetshopPrismaPort){}
-    edit(idPet:string, data:Partial<Pet>){
-        return this.petDB.editPet(idPet, data)
+    edit(cnpj:string,idPet:string, data:Partial<Pet>){
+        return this.petDB.editPet(cnpj,idPet, data)
     }
 }
