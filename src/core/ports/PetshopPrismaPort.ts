@@ -7,6 +7,7 @@ export default interface PetshopPrismaPort{
     existCnpj(cnp:string):any
     seachPets(id:string) :any
     editPet(idPet: string, data:Partial<Pet>): any
+    alterVaccinated(id: string, vaccinated:boolean):Promise<Pet>;
    
 
 }

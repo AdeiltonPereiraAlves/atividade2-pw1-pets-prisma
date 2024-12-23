@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Validador from "../utils/Validator";
 import PetshopRepository from "../adapters/db/PetshopRepository";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
+import Validator from "../utils/Validator";
 
 declare global {
   namespace Express {
@@ -21,8 +22,10 @@ async function checkExistsUserAccount(
     // const exists = await Validador.existsPetshop(cnpj);
     // if (exists) {
     // const novoPetshop = arrayPetshop.find((petshop) => petshop.cnpj === cnpj);
-    if (!cnpj) {
-      return res.status(400).json({ erro: "CNPJ não informado" });
+    const validateCnpj = Validator.validateCnpj(cnpj)
+    
+    if (!validateCnpj) {
+      return res.status(400).json({ erro: "CNPJ inválido" });
     }
 
     const exitsPetshop = new PetshopRepositoryPrisma();

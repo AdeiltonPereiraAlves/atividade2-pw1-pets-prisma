@@ -4,12 +4,14 @@ import AlterVaccinated from "../core/useCase/pets/AlterVaccinated";
 import PetshopRepository from "../adapters/db/PetshopRepository";
 import Validador from "../utils/Validator";
 import Pet from "../core/model/Pet";
+import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 
 export default class AlterVaccinatedController {
-  static async Alter(req: Request, res: Response):Promise<Pet | any> {
+  static async Alter(req: Request, res: Response): Promise<Pet | any> {
     try {
       const petShop: Petshop = req.petshop;
       const { id } = req.params;
+      const isTrue: boolean = true;
       const isId = Validador.validateId(id);
       if (!isId) {
         res.status(404).json({ erro: "Id inválido" });
@@ -19,8 +21,10 @@ export default class AlterVaccinatedController {
         res.status(404).json({ erro: "Pethop não existe" });
         return;
       }
-      const AlterVaccinatedNow = new AlterVaccinated(new PetshopRepository());
-      const isVaccinated = AlterVaccinatedNow.alter(petShop.cnpj, id);
+      const AlterVaccinatedNow = new AlterVaccinated(
+        new PetshopRepositoryPrisma()
+      );
+      const isVaccinated = await AlterVaccinatedNow.alter(id, isTrue);
 
       if (!isVaccinated) {
         res.status(404).json({ erro: "Pet Não existe" });

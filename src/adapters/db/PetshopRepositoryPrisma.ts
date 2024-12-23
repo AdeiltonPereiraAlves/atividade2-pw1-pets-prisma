@@ -8,6 +8,15 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   constructor() {
     this.prismaDb = new PrismaClient();
   }
+  async alterVaccinated( id: string, vaccinated: boolean):Promise<Pet| any> {
+    try {
+      const pet:Pet =  await this.prismaDb.pet.update({where: {id: id}, data: {vaccinated}})
+      return pet
+    } catch (error) {
+      
+      throw new Error("Erro ao mudar vaccinated para true.");
+    }
+  }
 
   async seachPetshop(cnpj: string) {
     const petshop = await this.prismaDb.petshop.findUnique({
@@ -117,5 +126,5 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         throw new Error("erro peditar pets");
       }
   }
- 
+  
 }

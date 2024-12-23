@@ -13,7 +13,7 @@ export default class EditPetController {
       const { id } = req.params;
      
       const existId = Validator.validateId(id)
-      if (!petShop || !petShop.cnpj) {
+      if (!petShop ) {
         res.status(400).json({ error: "Petshop não informado ou inválido." });
         return;
       }
