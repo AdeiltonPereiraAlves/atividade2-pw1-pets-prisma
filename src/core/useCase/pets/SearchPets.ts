@@ -1,10 +1,14 @@
+import PetshopResitoryPrisma from "../../../adapters/db/PetshopRepositoryPrisma";
 import Petshop from "../../model/Petshop";
 import PetshopPort from "../../ports/PetshopPort";
 
 export default class SeachPets{
-    constructor(private petshopDb: PetshopPort ){}
+    constructor(private petshopDb: PetshopResitoryPrisma ){}
 
-    seach(petshop: Petshop){
-        return this.petshopDb.seachPets(petshop);
+    seach(id: string | undefined){
+        if(!id){
+            return false
+        }
+        return this.petshopDb.seachPets(id);
     }
 }

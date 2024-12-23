@@ -7,7 +7,7 @@ export default class RegisterPetshop{
 
     }
     execute(petshop: Partial<Petshop>){
-       return this.petshopDb.insert(petshop)
+       return this.petshopDb.insertPetshop(petshop)
     }
 
 }

@@ -34,7 +34,7 @@ export default class InsertPetController {
       };
       console.log(pet, "Pet")
       const RegisterPetNow = new RegisterPet(new PetshopRepositoryPrisma());
-      const petCreated: Pet | any = await RegisterPetNow.register(cnpj, pet);
+      const petCreated: Pet | any = await RegisterPetNow.execute(cnpj, pet);
 
       console.log(petCreated, "petcreated")
       if (!petCreated) {

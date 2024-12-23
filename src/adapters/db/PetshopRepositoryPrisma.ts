@@ -1,26 +1,30 @@
 import { Pet, PrismaClient } from "@prisma/client";
 import Petshop from "../../core/model/Petshop";
 import PetshopPrismaPort from "../../core/ports/PetshopPrismaPort";
+import Id from "../../core/shared/Id";
 
 export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   private prismaDb: PrismaClient;
   constructor() {
     this.prismaDb = new PrismaClient();
   }
+  async seachPetshop(cnpj: string) {
+    const petshop = await this.prismaDb.petshop.findUnique({
+      where: { cnpj: cnpj },
+      include: { pets: true },
+    });
+    if (!petshop) {
+      throw new Error(`Nenhum petshop encontrado com o CNPJ: ${cnpj}`);
+    }
+    return petshop;
+  }
   async insertPet(cnpj: string, pet: any): Promise<Pet | any> {
-    console.log(cnpj, pet, "Pet e cnpj");
+  
     try {
-      const petshopPets = await this.prismaDb.petshop.findUnique({
-        where: { cnpj: cnpj },
-        include: { pets: true },
-
-      });
-      if (!petshopPets) {
-        throw new Error(`Nenhum petshop encontrado com o CNPJ: ${cnpj}`);
-      }
-      const id= petshopPets.id 
-      console.log(petshopPets, "petshopPets");
-     let {
+       const existsPetshop = await this.seachPetshop(cnpj)
+      const id = existsPetshop.id;
+      console.log(existsPetshop, "existpetshop");
+      let {
         name,
         type,
         description,
@@ -28,36 +32,28 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         deadline_vaccination,
         created_at,
       } = pet;
-      console.log("Dados para criação do pet:", {
-        name,
-        type,
-        description,
-        vaccinated,
-        deadline_vaccination,
-        created_at,
-        petshopId: id,
-      });
-      const deadlineDate = new Date(deadline_vaccination);
-      
      
-      if (petshopPets) {
-        console.log(petshopPets, "dontro do if");
+      const deadlineDate = new Date(deadline_vaccination);
+
+      if (existsPetshop) {
+        console.log(existsPetshop, "dontro do if");
         const newPet = await this.prismaDb.pet.create({
           data: {
+            id: Id.gerar(),
             name,
             type,
             description,
             vaccinated,
-            deadline_vaccination:deadlineDate,
+            deadline_vaccination: deadlineDate,
             created_at,
-            petshopId: petshopPets.id,
+            petshopId:id,
           },
         });
 
-        console.log(newPet, "newPet");
+        
         return newPet;
       } else {
-        console.log("deu erro");
+        throw new Error("Não exite esse petshop");
       }
     } catch (error) {
       console.log("Erro ao inserir pet:", error);
@@ -75,7 +71,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro no existcnpj");
     }
   }
-  async insert(petshop: Petshop): Promise<Petshop | any> {
+  async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
     try {
       let { name, cnpj, pets } = petshop as any;
       console.log(name, cnpj, pets);
@@ -95,5 +91,20 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       console.log(error);
       throw new Error("erro ao criar petShop");
     }
+  }
+  async seachPets(id: string){
+     try {
+       
+      const pets= await this.prismaDb.pet.findMany({where: {petshopId: id}})
+     
+      console.log(pets)
+      
+        return pets
+      
+     } catch (error) {
+      console.log(error);
+      throw new Error("erro procurar pets");
+     }
+
   }
 }
