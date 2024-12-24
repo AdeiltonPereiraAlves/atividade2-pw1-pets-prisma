@@ -1,4 +1,4 @@
-import Validator from "../../../utils/Validator";
+import Validator from "../../utils/Validator";
 import Erros from "../../constants/Erros";
 import Petshop from "../../model/Petshop";
 import PetshopPort from "../../ports/PetshopPort";

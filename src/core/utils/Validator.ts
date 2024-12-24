@@ -1,5 +1,5 @@
-import arrayPetshop from "../adapters/db/ArrayPetshop";
-import Erros from "../core/constants/Erros";
+import arrayPetshop from "../../adapters/db/ArrayPetshop";
+import Erros from "../constants/Erros";
 
 export default class Validator {
   static validateCnpj(cnpj: string ): boolean {

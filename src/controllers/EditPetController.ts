@@ -4,7 +4,7 @@ import Pet from "../core/model/Pet";
 import EditPet from "../core/useCase/pets/EditPet";
 import PetshopRepository from "../adapters/db/PetshopRepository";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
-import Validator from "../utils/Validator";
+import Validator from "../core/utils/Validator";
 
 
 export default class EditPetController {

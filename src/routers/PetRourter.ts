@@ -1,6 +1,6 @@
 import { Router } from "express";
 import buscarPetsNoPetshop from "../controllers/SeachPetsController";
-import { checkExistsUserAccount } from "../middleware/checkExistsUserAccount";
+import { checkExistsUserAccount } from "../core/middleware/checkExistsUserAccount";
 import insertPet from "../controllers/InsertPetController";
 import editPet from "../controllers/EditPetController";
 import alterVaccinated from "../controllers/AlterVaccinatedController";
