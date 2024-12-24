@@ -8,7 +8,7 @@ export default interface PetshopPrismaPort{
     seachPets(id:string) :any
     editPet(cnpj:string,idPet: string, data:Partial<Pet>): any
     alterVaccinated(idPet: string,cnpj:string, vaccinated:boolean):Promise<Pet[]>;
-     deletePet(cnpj:string, id: string): Pet[]
+    deletePet(cnpj:string, id: string):Promise<Pet[]| any>
    
 
 }

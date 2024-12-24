@@ -8,10 +8,21 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   constructor() {
     this.prismaDb = new PrismaClient();
   }
-  deletePet(cnpj: string, id: string): Pet[] {
+  async deletePet(cnpj: string, idPet: string):Promise<Pet[]|any> {
     try {
-    } catch (error) {}
-    throw new Error("Method not implemented.");
+       const petShop = await this.seachPetshop(cnpj)
+       const isPetDelete = await this.prismaDb.pet.deleteMany({where: { id: idPet, petshopId: petShop.id}})
+       console.log(isPetDelete)
+       if(isPetDelete){
+           const pets = await this.seachPets(petShop.id)
+           console.log(pets,"array de pets aqui no banco")
+           return pets
+       }
+
+    } catch (error) {
+      throw new Error("erro ao deletar pet.");
+    }
+    
   }
   async alterVaccinated(idPet: string,cnpj:string, vaccinated: boolean): Promise<Pet | any> {
     try {

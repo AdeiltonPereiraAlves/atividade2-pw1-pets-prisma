@@ -3,6 +3,7 @@ import Petshop from "../core/model/Petshop";
 import Validador from "../utils/Validator";
 import DeletePet from "../core/useCase/pets/DeletePet";
 import PetshopRepository from "../adapters/db/PetshopRepository";
+import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 
 
 
@@ -20,10 +21,11 @@ export default class DeletePetController{
                 res.status(404).json({erro: "petshop inválido"})
                 return
             }
-            const deletePet = new DeletePet(new PetshopRepository())
-            const arrayPets = deletePet.delete(petShop.cnpj, id)
-            if(!arrayPets){
-                res.status(404).json({erro: "array de pets inválido"})
+            const deletePet = new DeletePet(new PetshopRepositoryPrisma())
+            const arrayPets = await deletePet.delete(petShop.cnpj, id)
+            if(arrayPets.length === 0){
+                res.status(404).json({erro: "Não existe esse pet"})
+                return
             }
             res.status(200).json(arrayPets)
         } catch (error) {
