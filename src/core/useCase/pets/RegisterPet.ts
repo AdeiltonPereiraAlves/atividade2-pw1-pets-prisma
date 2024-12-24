@@ -10,19 +10,15 @@ export type Dto = {
   type: string;
   description: string;
   deadline_vaccination: Date;
-  cnpj: string,
+ 
   petshopId:string 
 };
 
 export default class RegisterPet implements UseCase<Dto, Pet> {
   constructor(private petsDB: PetshopPrismaPort) {}
   async execute(dto: Dto) {
-    // const existsPetshop = await this.petsDB.seachPetshop(dto.cnpj);
-    // if(!existsPetshop){
-    //     return Erros.PETSHOP_NAO_EXISTE
-    // }
-    
-    const pet:Pet = {
+   
+    const pet:Pet | any= {
       id: Id.gerar(),
       name: dto.name,
       type: dto.type,
@@ -33,6 +29,6 @@ export default class RegisterPet implements UseCase<Dto, Pet> {
       petshopId: dto.petshopId
       
     };
-    return this.petsDB.insertPet(dto.cnpj, pet);
+    return this.petsDB.insertPet(pet);
   }
 }

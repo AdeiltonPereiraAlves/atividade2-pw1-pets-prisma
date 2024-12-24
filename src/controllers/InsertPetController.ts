@@ -26,7 +26,8 @@ export default class InsertPetController {
       if (!name || !type || !description || !deadline_vaccination) {
         return res.status(400).json({ error: "Campos obrigatórios não fornecidos." });
       }
-      const dadosPet: Dto = {name , type, description, deadline_vaccination, cnpj: cnpj, petshopId:petShop.id}
+    
+      const dadosPet: Dto = {name , type, description, deadline_vaccination, petshopId:petShop.id}
      
     
       const RegisterPetNow = new RegisterPet(new PetshopRepositoryPrisma());
