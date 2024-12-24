@@ -13,13 +13,23 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
     } catch (error) {}
     throw new Error("Method not implemented.");
   }
-  async alterVaccinated(id: string, vaccinated: boolean): Promise<Pet | any> {
+  async alterVaccinated(idPet: string,cnpj:string, vaccinated: boolean): Promise<Pet | any> {
     try {
-      const pet: Pet = await this.prismaDb.pet.update({
-        where: { id: id },
+      const petShop = await this.seachPetshop(cnpj)
+      if(!petShop.id){
+        throw new Error("Erro ao mudar vaccinated para true.");
+      }
+      const isPetUpdate= await this.prismaDb.pet.updateMany({
+        where: { id: idPet , petshopId: petShop.id },
         data: { vaccinated },
       });
-      return pet;
+      console.log(isPetUpdate, "ispetupdate")
+      if (isPetUpdate) {
+        const pets = await this.seachPets(petShop.id);
+        const newPet = await this.seachPetId(pets, idPet);
+        return newPet;
+      }
+      
     } catch (error) {
       throw new Error("Erro ao mudar vaccinated para true.");
     }

@@ -13,20 +13,25 @@ export default class AlterVaccinatedController {
       const { id } = req.params;
       const isTrue: boolean = true;
       const isId = Validador.validateId(id);
-      if (!isId) {
-        res.status(404).json({ erro: "Id inválido" });
-        return;
-      }
+      const cnpjPetshop = petShop.cnpj
       if (!petShop) {
         res.status(404).json({ erro: "Pethop não existe" });
+        return;
+      }
+      if(!cnpjPetshop){
+        res.status(404).json({ erro: "idPetshop inválido" });
+        return;
+      }
+      if (!isId) {
+        res.status(404).json({ erro: "Id inválido" });
         return;
       }
       const AlterVaccinatedNow = new AlterVaccinated(
         new PetshopRepositoryPrisma()
       );
-      const isVaccinated = await AlterVaccinatedNow.alter(id, isTrue);
-
-      if (!isVaccinated) {
+      const isVaccinated= await AlterVaccinatedNow.alter(id,cnpjPetshop, isTrue);
+       console.log(isVaccinated, "isvacinade")
+      if (isVaccinated.length === 0) {
         res.status(404).json({ erro: "Pet Não existe" });
         return;
       }
