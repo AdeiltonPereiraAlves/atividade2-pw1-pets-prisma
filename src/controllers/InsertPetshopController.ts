@@ -1,35 +1,33 @@
-import PetshopRepository from "../adapters/db/PetshopRepository";
-import { Response, Request, NextFunction } from "express";
-import Id from "../core/shared/Id";
-import RegisterPetshop from "../core/useCase/Petshop/RegisterPetshop";
+import { Response, Request } from "express";
+import RegisterPetshop, { Dto } from "../core/useCase/Petshop/RegisterPetshop";
 import Petshop from "../core/model/Petshop";
-import BuscarPets from "../core/useCase/pets/SearchPets";
-import Validator from "../core/utils/Validator";
+
 import PetshopResitoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
+import Erros from "../core/constants/Erros";
 
 export default class PetshopController {
   static async insert(req: Request, res: Response): Promise<Response | any> {
     try {
       const { name, cnpj } = req.body;
 
-      const ObjPetshop: Partial<Petshop> = {
+      const ObjPetshop: Dto = {
         name: name,
         cnpj: cnpj,
+        pets: [],
       };
 
       const registerPetshop = new RegisterPetshop(new PetshopResitoryPrisma());
-      const newPetshop: Petshop | any = await registerPetshop.execute(
-        ObjPetshop
-      );
-
-      console.log(newPetshop, "newPetshop");
-      if (!newPetshop) {
-        return res.status(404).json({ erro: "Erro cnpj ja existe " });
+      const newPetshop: Petshop | boolean | string = await registerPetshop.execute(ObjPetshop);
+      if(newPetshop === false){
+        res.status(400).json({erro: Erros.CNPJ_JA_EXISTE})
+        return
       }
-
+      if(typeof newPetshop === "string"){
+         return res.status(400).json({erro: newPetshop})
+      }
       res.status(201).json(newPetshop);
     } catch (error) {
-      res.status(404).json({ erro: "Erro de servidor" });
+      res.status(500).json({ erro: "Erro de servidor" });
     }
   }
 }

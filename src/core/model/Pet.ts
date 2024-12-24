@@ -6,5 +6,6 @@ export default interface Pet {
     vaccinated: boolean
     deadline_vaccination?: Date
     created_at?: Date
+    petshopId: string
 
 }

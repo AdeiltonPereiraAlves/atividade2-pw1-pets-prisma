@@ -56,12 +56,12 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
     }
     return petshop;
   }
-  async insertPet(cnpj: string, pet: any): Promise<Pet | any> {
+  async insertPet(idPetshop: string, pet: any): Promise<Pet | any> {
     try {
-      const existsPetshop = await this.seachPetshop(cnpj);
-      const id = existsPetshop.id;
-      console.log(existsPetshop, "existpetshop");
+     
+      
       let {
+        id,
         name,
         type,
         description,
@@ -70,27 +70,25 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         created_at,
       } = pet;
 
-      const deadlineDate = new Date(deadline_vaccination);
+     
 
-      if (existsPetshop) {
-        console.log(existsPetshop, "dontro do if");
+      
+    
         const newPet = await this.prismaDb.pet.create({
           data: {
-            id: Id.gerar(),
+            id,
             name,
             type,
             description,
             vaccinated,
-            deadline_vaccination: deadlineDate,
+            deadline_vaccination,
             created_at,
-            petshopId: id,
+            petshopId: idPetshop
           },
         });
 
         return newPet;
-      } else {
-        throw new Error("Não exite esse petshop");
-      }
+      
     } catch (error) {
       console.log("Erro ao inserir pet:", error);
       throw new Error("erro ao inserir pet.");

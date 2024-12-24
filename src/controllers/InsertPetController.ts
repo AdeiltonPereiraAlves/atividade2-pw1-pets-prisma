@@ -1,44 +1,40 @@
 import Petshop from "../core/model/Petshop";
 import { Request, Response } from "express";
-import RegisterPet from "../core/useCase/pets/RegisterPet";
-import PetshopRepository from "../adapters/db/PetshopRepository";
+import RegisterPet, { Dto } from "../core/useCase/pets/RegisterPet";
+
 import Pet from "../core/model/Pet";
-import Id from "../core/shared/Id";
+
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
+import Erros from "../core/constants/Erros";
 export default class InsertPetController {
   static async insert(req: Request, res: Response): Promise<boolean | any> {
     try {
       const { name, type, description, deadline_vaccination } = req.body;
-
       const petShop: Petshop = req.petshop;
+     
       console.log(petShop,deadline_vaccination,"petshop e D")
       const cnpj = petShop.cnpj;
+     
       console.log(cnpj, "cnpj")
-
+      if(!petShop){
+        return Erros.PETSHOP_NAO_EXISTE
+      }
+      if(!petShop.id){
+        return Erros.ID_INVALIDO
+      }
       
       if (!name || !type || !description || !deadline_vaccination) {
         return res.status(400).json({ error: "Campos obrigatórios não fornecidos." });
       }
-      const deadlineDate = new Date(deadline_vaccination);
-      if (isNaN(deadlineDate.getTime())) {
-        return res.status(400).json({ error: "Data de vacinação inválida." });
-      }
+      const dadosPet: Dto = {name , type, description, deadline_vaccination, cnpj: cnpj, petshopId:petShop.id}
      
-      const pet: Pet = {
-        name,
-        type,
-        description,
-        vaccinated: false,
-        deadline_vaccination:deadlineDate, // Certifique-se de que a data seja válida
-        created_at: new Date(),
-      };
-      console.log(pet, "Pet")
+    
       const RegisterPetNow = new RegisterPet(new PetshopRepositoryPrisma());
-      const petCreated: Pet | any = await RegisterPetNow.execute(cnpj, pet);
+        const petCreated: Pet = await RegisterPetNow.execute(dadosPet);
 
       console.log(petCreated, "petcreated")
       if (!petCreated) {
-        res.status(404).json({ error: "Pet não criado." });
+        res.status(404).json({ error: Erros.PET_NAO_REGISTRADO });
         return;
       }
       res.status(201).json(petCreated);
