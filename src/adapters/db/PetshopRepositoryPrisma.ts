@@ -107,27 +107,23 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro no existcnpj");
     }
   }
-  async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
-    try {
-      let { name, cnpj, pets } = petshop as any;
-      console.log(name, cnpj, pets);
-      const isTrue = await this.existCnpj(cnpj);
-      console.log(isTrue, "istrue");
-      if (!isTrue) {
-        pets ? [...pets] : [];
 
+  // refatorando ----------------------
+  async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
+  
+      let { name, cnpj} = petshop as any;
+      console.log(name, cnpj, "name e cnpj no banco");
+      
+    
         const petShop = await this.prismaDb.petshop.create({
           data: { name, cnpj },
         });
         return petShop;
-      } else {
-        throw new Error("Cnpj já existe");
-      }
-    } catch (error: any) {
-      console.log(error);
-      throw new Error("erro ao criar petShop");
-    }
+     
+   
+    
   }
+  //fim-----------------------------------------
   async seachPets(id: string) {
     try {
       const pets = await this.prismaDb.pet.findMany({

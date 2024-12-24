@@ -11,12 +11,12 @@ export default class PetshopController {
   static async insert(req: Request, res: Response): Promise<Response | any> {
     try {
       const { name, cnpj } = req.body;
-      const validateCnpj = Validator.validateCnpj(cnpj);
+      // const validateCnpj = Validator.validateCnpj(cnpj);
 
-      if (!validateCnpj) {
-        res.status(400).json({ erro: "Cnpj Inválido" });
-        return;
-      }
+      // if (!validateCnpj) {
+      //   res.status(400).json({ erro: "Cnpj Inválido" });
+      //   return;
+      // }
 
       const ObjPetshop: Partial<Petshop> = {
         name: name,
