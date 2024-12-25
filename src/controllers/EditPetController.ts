@@ -5,6 +5,7 @@ import EditPet from "../core/useCase/pets/EditPet";
 import PetshopRepository from "../adapters/db/PetshopRepository";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 import Validator from "../core/utils/Validator";
+import  Dto  from "../core/useCase/pets/EditPet";
 
 
 export default class EditPetController {
@@ -12,35 +13,35 @@ export default class EditPetController {
     try {
       const petShop: Petshop = req.petshop;
       const { id } = req.params;
-      const cnpj:string = petShop.cnpj
-   
+      const cnpj = petShop.cnpj
+      
+      const { name, type, description, deadline_vaccination } = req.body;
       const existId = Validator.validateId(id)
-      if (!petShop ) {
+      if (!petShop.id ) {
         res.status(400).json({ error: "Petshop não informado ou inválido." });
         return;
       }
-      if (!cnpj ) {
-        res.status(400).json({ error: " inválido." });
-        return;
-      }
-
+     
+    
       if (!existId) {
         res.status(400).json({ error: "ID do pet Inválido." });
         return;
       }
       console.log(id, "id no controler")
-      const petEdit:Partial<Pet> = {
-        
-        name: req.body.name,
-        type: req.body.type,
-        description: req.body.description,
-        vaccinated: req.body.vaccinated || false,
-        deadline_vaccination: req.body.deadline_vaccination,
+    
+      const petDados:Dto | any = {
+        id,
+        name,
+        type,
+        description,
+        deadline_vaccination ,
+        petshopId: petShop.id,
+        cnpj
       };
       
-
+      console.log(petDados, "Petdados")
       const editPetNow = new EditPet(new PetshopRepositoryPrisma());
-      const petEdited = await editPetNow.edit(cnpj,id,petEdit);
+      const petEdited = await editPetNow.execute(petDados);
 
       console.log(petEdited, "Pet editado")
      

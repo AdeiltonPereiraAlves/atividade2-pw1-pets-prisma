@@ -2,6 +2,7 @@ import { Pet, PrismaClient } from "@prisma/client";
 import Petshop from "../../core/model/Petshop";
 import PetshopPrismaPort from "../../core/ports/PetshopPrismaPort";
 import Id from "../../core/shared/Id";
+import Erros from "../../core/constants/Erros";
 
 export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   private prismaDb: PrismaClient;
@@ -103,7 +104,6 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
     }
   }
 
-  // refatorando ----------------------
   async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
     let { name, cnpj } = petshop as any;
     console.log(name, cnpj, "name e cnpj no banco");
@@ -113,7 +113,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
     });
     return petShop;
   }
-  //fim-----------------------------------------
+
   async seachPets(id: string) {
     try {
       const pets = await this.prismaDb.pet.findMany({
@@ -136,10 +136,29 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("Pet não encontrado");
     }
   }
+  //---------------------------------------------
+  async editPet(pet: any) {
+    let {
+      id,
+      name,
+      type,
+      description,
+      
+      deadline_vaccination,
 
-  async editPet(cnpj: string, idPet: string, dataUpDate: Partial<Pet>) {
+      petshopId,
+      cnpj
+    } = pet;
+    const dadosPet = {
+      name,
+      type,
+      description,
+      deadline_vaccination,
+    };
+
     try {
-      const petshop = await this.seachPetshop(cnpj);
+      const petshop = await this.existCnpj(cnpj)
+      
       if (!petshop) {
         throw new Error("erro editar pets");
       }
@@ -147,16 +166,18 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       if (!idPetShop) {
         throw new Error("erro procurar pets");
       }
-      console.log(petshop, idPet, "id e petshop no banco");
+      
+      console.log(id, petshopId, "id e petshop no banco");
       const editePet = await this.prismaDb.pet.updateMany({
-        where: { id: idPet, petshopId: idPetShop },
-        data: dataUpDate,
+        where: { id:id, petshopId:idPetShop },
+        data: dadosPet,
       });
       if (editePet) {
-        const pets = await this.seachPets(idPetShop);
-        const newPet = await this.seachPetId(pets, idPet);
+        const pets = await this.seachPets(petshopId);
+        const newPet = await this.seachPetId(pets, id);
         return newPet;
       }
+     
     } catch (error) {
       throw new Error("erro peditar pets");
     }

@@ -20,9 +20,7 @@ async function checkExistsUserAccount(
   try {
     const cnpj = req.headers["cnpj"] as string;
     console.log(cnpj);
-    // const exists = await Validador.existsPetshop(cnpj);
-    // if (exists) {
-    // const novoPetshop = arrayPetshop.find((petshop) => petshop.cnpj === cnpj);
+   
     const validateCnpj = Validator.validateCnpj(cnpj)
     
     if (!validateCnpj) {
@@ -30,7 +28,7 @@ async function checkExistsUserAccount(
     }
 
     const exitsPetshop = new PetshopRepositoryPrisma();
-    const newPetshop = await exitsPetshop.existCnpj(cnpj);
+    const newPetshop = await exitsPetshop.seachPetshop(cnpj);
     console.log(newPetshop);
 
     if (newPetshop) {
