@@ -1,13 +1,15 @@
 import PetshopResitoryPrisma from "../../../adapters/db/PetshopRepositoryPrisma";
+import Erros from "../../constants/Erros";
+import Pet from "../../model/Pet";
 import Petshop from "../../model/Petshop";
 import PetshopPort from "../../ports/PetshopPort";
 
 export default class SeachPets{
     constructor(private petshopDb: PetshopResitoryPrisma ){}
 
-    seach(id: string | undefined){
+    async seach(id: string | undefined):Promise<Pet[]|string>{
         if(!id){
-            return false
+            return Erros.ID_INVALIDO
         }
         return this.petshopDb.seachPets(id);
     }
