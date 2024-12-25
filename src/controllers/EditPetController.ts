@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Petshop from "../core/model/Petshop";
 import Pet from "../core/model/Pet";
-import EditPet from "../core/useCase/pets/EditPet";
+import EditPet, { DtoPetEdite } from "../core/useCase/pets/EditPet";
 import PetshopRepository from "../adapters/db/PetshopRepository";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 import Validator from "../core/utils/Validator";
@@ -29,7 +29,7 @@ export default class EditPetController {
       }
       console.log(id, "id no controler")
     
-      const petDados:Dto | any = {
+      const petDados:DtoPetEdite | any = {
         id,
         name,
         type,

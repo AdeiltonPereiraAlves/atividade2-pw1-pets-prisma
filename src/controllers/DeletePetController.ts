@@ -20,8 +20,12 @@ export default class DeletePetController{
                 res.status(404).json({erro: "petshop inválido"})
                 return
             }
+            const petDelete = {
+                id,
+                cnpj:petShop.cnpj,
+            }
             const deletePet = new DeletePet(new PetshopRepositoryPrisma())
-            const arrayPets = await deletePet.delete(petShop.cnpj, id)
+            const arrayPets = await deletePet.execute(petDelete)
             if(arrayPets.length === 0){
                 res.status(404).json({erro: "Não existe esse pet"})
                 return

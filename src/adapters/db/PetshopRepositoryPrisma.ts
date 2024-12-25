@@ -1,17 +1,28 @@
 import { Pet, PrismaClient } from "@prisma/client";
 import Petshop from "../../core/model/Petshop";
 import PetshopPrismaPort from "../../core/ports/PetshopPrismaPort";
+import { DtoDelete } from "../../core/useCase/pets/DeletePet";
+import { DotenvConfigOptions } from "dotenv";
+import { DtoVaccianted } from "../../core/useCase/pets/AlterVaccinated";
+import Erros from "../../core/constants/Erros";
 
 export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   private prismaDb: PrismaClient;
   constructor() {
     this.prismaDb = new PrismaClient();
   }
-  async deletePet(cnpj: string, idPet: string): Promise<Pet[] | any> {
+  async deletePet(petDelet: DtoDelete): Promise<Pet[] | any> {
     try {
+      const { id, cnpj } = petDelet;
+      console.log(id, "id");
       const petShop = await this.seachPetshop(cnpj);
+      const valideId = await this.seachPetId(petShop.pets, id);
+      console.log(valideId, "valide id");
+      if (valideId.length === 0) {
+        return Erros.ID_INEXISTENTE;
+      }
       const isPetDelete = await this.prismaDb.pet.deleteMany({
-        where: { id: idPet, petshopId: petShop.id },
+        where: { id: id, petshopId: petShop.id },
       });
       console.log(isPetDelete);
       if (isPetDelete) {
@@ -23,7 +34,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro ao deletar pet.");
     }
   }
-  async alterVaccinated(petVaccinated: any): Promise<Pet | any> {
+  async alterVaccinated(petVaccinated: DtoVaccianted): Promise<Pet | any> {
     try {
       const { id, vaccinated, cnpj } = petVaccinated;
       console.log(id, "idpetpet");
@@ -149,14 +160,20 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
 
       cnpj,
     } = pet;
-    const dadosPet = {
-      name,
-      type,
-      description,
-      deadline_vaccination,
-    };
 
+    
     try {
+      const petInfo = await this.prismaDb.pet.findFirst({ where: { id: id } });
+      const dadosPet = {
+        name: name ? name : petInfo?.name,
+
+        type: type ? type : petInfo?.type,
+        description: description ? description : petInfo?.description,
+
+        deadline_vaccination: deadline_vaccination
+          ? deadline_vaccination
+          : petInfo?.deadline_vaccination,
+      };
       const petshop = await this.existCnpj(cnpj);
 
       if (!petshop) {

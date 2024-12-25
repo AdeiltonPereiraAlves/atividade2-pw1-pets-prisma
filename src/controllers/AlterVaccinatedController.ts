@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Petshop from "../core/model/Petshop";
-import AlterVaccinated, { Dto } from "../core/useCase/pets/AlterVaccinated";
+import AlterVaccinated, { DtoVaccianted } from "../core/useCase/pets/AlterVaccinated";
 import Validador from "../core/utils/Validator";
 import Pet from "../core/model/Pet";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
@@ -12,8 +12,7 @@ export default class AlterVaccinatedController {
       const { id } = req.params;
 
       const isId = Validador.validateId(id);
-      console.log(id, "idcontroler");
-      console.log(isId, "isId controler");
+     
       const cnpjPetshop = petShop.cnpj;
       if (!petShop) {
         res.status(404).json({ erro: "Pethop não existe" });
@@ -30,8 +29,9 @@ export default class AlterVaccinatedController {
       const AlterVaccinatedNow = new AlterVaccinated(
         new PetshopRepositoryPrisma()
       );
-      const vaccinatedPet: Dto = {
+      const vaccinatedPet: DtoVaccianted= {
         id: id,
+        vaccinated:true,
         cnpj: cnpjPetshop,
       };
       const isVaccinated = await AlterVaccinatedNow.execute(vaccinatedPet);

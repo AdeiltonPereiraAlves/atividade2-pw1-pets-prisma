@@ -3,16 +3,17 @@ import PetshopPort from "../../ports/PetshopPort";
 import PetshopPrismaPort from "../../ports/PetshopPrismaPort";
 import UseCase from "../../shared/UseCase";
 
-export type Dto = {
+export type DtoVaccianted = {
   id: string;
+  vaccinated:boolean;
   cnpj: string;
 };
-export default class AlterVaccinated implements UseCase<Dto, Pet> {
+export default class AlterVaccinated implements UseCase<DtoVaccianted, Pet> {
   constructor(private petshopDb: PetshopPrismaPort) {}
-  async execute(dto: Dto): Promise<Pet | any> {
+  async execute(dto: DtoVaccianted): Promise<Pet | any> {
     const petVaccinated = {
       id: dto.id,
-      vaccinated: true,
+      vaccinated: dto.vaccinated,
       cnpj: dto.cnpj,
     };
     const pet = await this.petshopDb.alterVaccinated(petVaccinated);
