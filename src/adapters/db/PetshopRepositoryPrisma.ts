@@ -1,8 +1,6 @@
 import { Pet, PrismaClient } from "@prisma/client";
 import Petshop from "../../core/model/Petshop";
 import PetshopPrismaPort from "../../core/ports/PetshopPrismaPort";
-import Id from "../../core/shared/Id";
-import Erros from "../../core/constants/Erros";
 
 export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   private prismaDb: PrismaClient;
@@ -25,24 +23,27 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro ao deletar pet.");
     }
   }
-  async alterVaccinated(
-    idPet: string,
-    cnpj: string,
-    vaccinated: boolean
-  ): Promise<Pet | any> {
+  async alterVaccinated(petVaccinated: any): Promise<Pet | any> {
     try {
+      const { id, vaccinated, cnpj } = petVaccinated;
+      console.log(id, "idpetpet");
       const petShop = await this.seachPetshop(cnpj);
       if (!petShop.id) {
         throw new Error("Erro ao mudar vaccinated para true.");
       }
       const isPetUpdate = await this.prismaDb.pet.updateMany({
-        where: { id: idPet, petshopId: petShop.id },
+        where: { id: id, petshopId: petShop.id },
         data: { vaccinated },
       });
       console.log(isPetUpdate, "ispetupdate");
       if (isPetUpdate) {
+        console.log(isPetUpdate, "ispetupdate");
+
         const pets = await this.seachPets(petShop.id);
-        const newPet = await this.seachPetId(pets, idPet);
+        console.log(pets, "pets");
+        console.log(id, "idpet");
+        const newPet = await this.seachPetId(pets, id);
+        console.log(newPet, "new pet");
         return newPet;
       }
     } catch (error) {
@@ -143,11 +144,10 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       name,
       type,
       description,
-      
+
       deadline_vaccination,
 
-      petshopId,
-      cnpj
+      cnpj,
     } = pet;
     const dadosPet = {
       name,
@@ -157,8 +157,8 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
     };
 
     try {
-      const petshop = await this.existCnpj(cnpj)
-      
+      const petshop = await this.existCnpj(cnpj);
+
       if (!petshop) {
         throw new Error("erro editar pets");
       }
@@ -166,18 +166,16 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       if (!idPetShop) {
         throw new Error("erro procurar pets");
       }
-      
-      console.log(id, petshopId, "id e petshop no banco");
+
       const editePet = await this.prismaDb.pet.updateMany({
-        where: { id:id, petshopId:idPetShop },
+        where: { id: id, petshopId: idPetShop },
         data: dadosPet,
       });
       if (editePet) {
-        const pets = await this.seachPets(petshopId);
+        const pets = await this.seachPets(idPetShop);
         const newPet = await this.seachPetId(pets, id);
         return newPet;
       }
-     
     } catch (error) {
       throw new Error("erro peditar pets");
     }

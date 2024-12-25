@@ -35,7 +35,7 @@ export default class EditPetController {
         type,
         description,
         deadline_vaccination ,
-        petshopId: petShop.id,
+       
         cnpj
       };
       

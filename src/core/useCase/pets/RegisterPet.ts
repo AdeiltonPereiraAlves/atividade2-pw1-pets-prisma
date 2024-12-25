@@ -16,7 +16,7 @@ export type Dto = {
 
 export default class RegisterPet implements UseCase<Dto, Pet> {
   constructor(private petsDB: PetshopPrismaPort) {}
-  async execute(dto: Dto) {
+  async execute(dto: Dto):Promise<Pet> {
    
     const pet:Pet | any= {
       id: Id.gerar(),

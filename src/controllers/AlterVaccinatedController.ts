@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Petshop from "../core/model/Petshop";
-import AlterVaccinated from "../core/useCase/pets/AlterVaccinated";
-import PetshopRepository from "../adapters/db/PetshopRepository";
+import AlterVaccinated, { Dto } from "../core/useCase/pets/AlterVaccinated";
 import Validador from "../core/utils/Validator";
 import Pet from "../core/model/Pet";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
@@ -11,14 +10,16 @@ export default class AlterVaccinatedController {
     try {
       const petShop: Petshop = req.petshop;
       const { id } = req.params;
-      const isTrue: boolean = true;
+
       const isId = Validador.validateId(id);
-      const cnpjPetshop = petShop.cnpj
+      console.log(id, "idcontroler");
+      console.log(isId, "isId controler");
+      const cnpjPetshop = petShop.cnpj;
       if (!petShop) {
         res.status(404).json({ erro: "Pethop não existe" });
         return;
       }
-      if(!cnpjPetshop){
+      if (!cnpjPetshop) {
         res.status(404).json({ erro: "idPetshop inválido" });
         return;
       }
@@ -29,8 +30,12 @@ export default class AlterVaccinatedController {
       const AlterVaccinatedNow = new AlterVaccinated(
         new PetshopRepositoryPrisma()
       );
-      const isVaccinated= await AlterVaccinatedNow.alter(id,cnpjPetshop, isTrue);
-       console.log(isVaccinated, "isvacinade")
+      const vaccinatedPet: Dto = {
+        id: id,
+        cnpj: cnpjPetshop,
+      };
+      const isVaccinated = await AlterVaccinatedNow.execute(vaccinatedPet);
+      console.log(isVaccinated, "isvacinade");
       if (isVaccinated.length === 0) {
         res.status(404).json({ erro: "Pet Não existe" });
         return;

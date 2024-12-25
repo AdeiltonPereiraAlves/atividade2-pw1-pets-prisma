@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Petshop from "../core/model/Petshop";
 import Validador from "../core/utils/Validator";
 import DeletePet from "../core/useCase/pets/DeletePet";
-import PetshopRepository from "../adapters/db/PetshopRepository";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 
 
