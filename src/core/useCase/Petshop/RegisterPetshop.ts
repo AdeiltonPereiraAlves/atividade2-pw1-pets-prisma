@@ -7,35 +7,40 @@ import UseCase from "../../shared/UseCase";
 import { Pet } from "@prisma/client";
 import Id from "../../shared/Id";
 
-export type Dto = {name: string, cnpj:string, pets:Pet[]}
-export default class RegisterPetshop implements UseCase<Dto, Petshop| boolean | string>{
-    constructor(private petshopDb: PetshopPrismaPort){
-
-    }
-    async execute(dto: Dto):Promise<Petshop| boolean | string >{
-     
-       
-        if(!Validator.validarNome(dto.name)){
-            return Erros.NOME_INVALIDO
-        }
-
-        if(!dto.cnpj){
-            return Erros.CNPJ_IMCOMPELTO
-        }
-        if(!Validator.validateCnpj(dto.cnpj)) return Erros.CNPJ_INVALIDO
-        
-        const petshop: Petshop ={
-            id: Id.gerar(),
-            name: dto.name,
-            cnpj: dto.cnpj,
-            pets: []
-        }
-        const isTrue = await this.petshopDb.existCnpj(petshop.cnpj)
-        if(!isTrue){
-            petshop.pets?[...petshop.pets]: []
-            return this.petshopDb.insertPetshop(petshop)
-        }
-        return false
+export type Dto = { name: string; cnpj: string; pets: Pet[] };
+export type RegisterPetshopResponse = {
+  sucess: boolean;
+  message?: string;
+  data?:any;
+};
+export default class RegisterPetshop implements UseCase<Dto, RegisterPetshopResponse> {
+  constructor(private petshopDb: PetshopPrismaPort) {}
+  async execute(dto: Dto): Promise<RegisterPetshopResponse> {
+    if (!Validator.validarNome(dto.name)) {
+      return { sucess: false, message: Erros.NOME_INVALIDO };
     }
 
+    if (!dto.cnpj) {
+      return { sucess: false, message: Erros.CNPJ_NAO_EXISTE };
+    }
+    if (!Validator.validateCnpj(dto.cnpj)){
+
+        return { sucess: false, message: Erros.CNPJ_INVALIDO };
+    }
+
+    const petshop: Petshop = {
+      id: Id.gerar(),
+      name: dto.name,
+      cnpj: dto.cnpj,
+      pets: [],
+    };
+    const isTrue = await this.petshopDb.existCnpj(petshop.cnpj);
+    console.log(isTrue)
+    if (!isTrue) {
+    //   petshop.pets ? [...petshop.pets] : [];
+      const newPetshop = await this.petshopDb.insertPetshop(petshop);
+      return {sucess: true, message: "Petshop cadastrado com sucesso", data: newPetshop}
+    }
+    return {sucess: false, message: Erros.CNPJ_JA_EXISTE};
+  }
 }

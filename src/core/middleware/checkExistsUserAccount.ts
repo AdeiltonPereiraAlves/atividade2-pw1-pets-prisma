@@ -30,7 +30,7 @@ async function checkExistsUserAccount(
     const exitsPetshop = new PetshopRepositoryPrisma();
     const newPetshop = await exitsPetshop.seachPetshop(cnpj);
     console.log(newPetshop);
-
+   
     if (newPetshop) {
       req.petshop = newPetshop;
 

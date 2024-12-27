@@ -5,11 +5,10 @@ import { DtoDelete } from "../../core/useCase/pets/DeletePet";
 import { DotenvConfigOptions } from "dotenv";
 import { DtoVaccianted } from "../../core/useCase/pets/AlterVaccinated";
 import Erros from "../../core/constants/Erros";
-
+import prismaDb from "./Prisma";
 export default class PetshopResitoryPrisma implements PetshopPrismaPort {
-  private prismaDb: PrismaClient;
+  
   constructor() {
-    this.prismaDb = new PrismaClient();
   }
   async deletePet(petDelet: DtoDelete): Promise<Pet[] | any> {
     try {
@@ -21,7 +20,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       if (valideId.length === 0) {
         return Erros.ID_INEXISTENTE;
       }
-      const isPetDelete = await this.prismaDb.pet.deleteMany({
+      const isPetDelete = await prismaDb.pet.deleteMany({
         where: { id: id, petshopId: petShop.id },
       });
       console.log(isPetDelete);
@@ -42,7 +41,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       if (!petShop.id) {
         throw new Error("Erro ao mudar vaccinated para true.");
       }
-      const isPetUpdate = await this.prismaDb.pet.updateMany({
+      const isPetUpdate = await prismaDb.pet.updateMany({
         where: { id: id, petshopId: petShop.id },
         data: { vaccinated },
       });
@@ -63,7 +62,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   }
 
   async seachPetshop(cnpj: string) {
-    const petshop = await this.prismaDb.petshop.findUnique({
+    const petshop = await prismaDb.petshop.findUnique({
       where: { cnpj: cnpj },
       include: { pets: true },
     });
@@ -85,7 +84,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         petshopId,
       } = pet;
 
-      const newPet = await this.prismaDb.pet.create({
+      const newPet = await prismaDb.pet.create({
         data: {
           id,
           name,
@@ -106,7 +105,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   }
   async existCnpj(cnpj: string): Promise<boolean | any> {
     try {
-      const isTrue = await this.prismaDb.petshop.findUnique({
+      const isTrue = await prismaDb.petshop.findUnique({
         where: { cnpj: cnpj },
       });
       console.log(isTrue, "Existte cnpj");
@@ -117,18 +116,19 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   }
 
   async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
-    let { name, cnpj } = petshop as any;
+    let { name, cnpj} = petshop as any ;
     console.log(name, cnpj, "name e cnpj no banco");
-
-    const petShop = await this.prismaDb.petshop.create({
-      data: { name, cnpj },
+  
+    const petShop:Petshop = await prismaDb.petshop.create({
+      data: { name, cnpj},
     });
+    console.log(petShop,"petshop banco")
     return petShop;
   }
 
   async seachPets(id: string) {
     try {
-      const pets = await this.prismaDb.pet.findMany({
+      const pets = await prismaDb.pet.findMany({
         where: { petshopId: id },
       });
 
@@ -163,7 +163,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
 
     
     try {
-      const petInfo = await this.prismaDb.pet.findFirst({ where: { id: id } });
+      const petInfo = await prismaDb.pet.findFirst({ where: { id: id } });
       const dadosPet = {
         name: name ? name : petInfo?.name,
 
@@ -184,7 +184,7 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
         throw new Error("erro procurar pets");
       }
 
-      const editePet = await this.prismaDb.pet.updateMany({
+      const editePet = await prismaDb.pet.updateMany({
         where: { id: id, petshopId: idPetShop },
         data: dadosPet,
       });

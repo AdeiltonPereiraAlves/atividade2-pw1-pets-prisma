@@ -12,9 +12,9 @@ export  type DtoPetEdite = {
         cnpj:string
       
 }
-export default class EditPet implements UseCase<Dto,Pet>{
+export default class EditPet implements UseCase<DtoPetEdite,Pet>{
     constructor(private petDB: PetshopPrismaPort){}
-    execute(dto:Dto){
+    execute(dto:DtoPetEdite){
         const pet:any= {
             id: dto.id,
             name: dto.name,

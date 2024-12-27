@@ -23,7 +23,7 @@ export default class Validator {
   static validarNome(valor:any){
      
 
-       const nomeRegex = /^[a-zA-ZÀ-ÿ\s]{3,15}$/;
+       const nomeRegex = /^[a-zA-ZÀ-ÿ\s]{3,30}$/;
        return nomeRegex.test(valor)
     
   }

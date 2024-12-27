@@ -1,3 +1,4 @@
+import { error } from "console";
 import Erros from "../../constants/Erros";
 import Pet from "../../model/Pet";
 import PetshopPort from "../../ports/PetshopPort";
@@ -5,20 +6,20 @@ import PetshopPrismaPort from "../../ports/PetshopPrismaPort";
 import Id from "../../shared/Id";
 import UseCase from "../../shared/UseCase";
 
-export type Dto = {
+export type DtoRegisterPet = {
   name: string;
   type: string;
   description: string;
   deadline_vaccination: Date;
- 
-  petshopId:string 
+
+  petshopId: string;
 };
 
-export default class RegisterPet implements UseCase<Dto, Pet> {
+export default class RegisterPet implements UseCase<DtoRegisterPet, Pet> {
   constructor(private petsDB: PetshopPrismaPort) {}
-  async execute(dto: Dto):Promise<Pet> {
-   
-    const pet:Pet | any= {
+  async execute(dto: DtoRegisterPet): Promise<Pet> {
+    
+    const pet: Pet | any = {
       id: Id.gerar(),
       name: dto.name,
       type: dto.type,
@@ -26,8 +27,7 @@ export default class RegisterPet implements UseCase<Dto, Pet> {
       vaccinated: false,
       deadline_vaccination: new Date(dto.deadline_vaccination),
       created_at: new Date(),
-      petshopId: dto.petshopId
-      
+      petshopId: dto.petshopId,
     };
     return this.petsDB.insertPet(pet);
   }

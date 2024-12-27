@@ -1,6 +1,6 @@
 import Petshop from "../core/model/Petshop";
 import { Request, Response } from "express";
-import RegisterPet, { Dto } from "../core/useCase/pets/RegisterPet";
+import RegisterPet from "../core/useCase/pets/RegisterPet";
 
 import Pet from "../core/model/Pet";
 
@@ -13,34 +13,27 @@ export default class InsertPetController {
       const petShop: Petshop = req.petshop;
      
       console.log(petShop,deadline_vaccination,"petshop e D")
-      const cnpj = petShop.cnpj;
+      const petshopId = petShop.id!;
      
-      console.log(cnpj, "cnpj")
-      if(!petShop){
-        return Erros.PETSHOP_NAO_EXISTE
-      }
-      if(!petShop.id){
-        return Erros.ID_INVALIDO
-      }
       
-      if (!name || !type || !description || !deadline_vaccination) {
+      
+      if (!name || !type || !description || !deadline_vaccination || !petshopId) {
         return res.status(400).json({ error: "Campos obrigatórios não fornecidos." });
       }
     
-      const dadosPet: Dto = {name , type, description, deadline_vaccination, petshopId:petShop.id}
+     
      
     
       const RegisterPetNow = new RegisterPet(new PetshopRepositoryPrisma());
-        const petCreated: Pet = await RegisterPetNow.execute(dadosPet);
+      const petCreated: Pet = await RegisterPetNow.execute({name , type, description, deadline_vaccination, petshopId});
 
-      console.log(petCreated, "petcreated")
-      if (!petCreated) {
-        res.status(404).json({ error: Erros.PET_NAO_REGISTRADO });
-        return;
-      }
+      
       res.status(201).json(petCreated);
-    } catch (erro) {
-      res.status(404).json({ erro: "Erro desconhecido" });
+    } catch (erro: any) {
+      if(erro.message ===Erros.PET_NAO_REGISTRADO){
+        res.status(404).json({error: "erro ao registrar pet"})
+      }
+      res.status(500).json({ erro: "Erro desconhecido" });
     }
   }
 }

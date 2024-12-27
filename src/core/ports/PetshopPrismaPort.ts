@@ -1,8 +1,9 @@
 import { Pet } from "@prisma/client";
 import Petshop from "../model/Petshop";
+import { RegisterPetshopResponse } from "../useCase/Petshop/RegisterPetshop";
 
 export default interface PetshopPrismaPort{
-    insertPetshop(petshop:Partial<Petshop>): Promise<Petshop| boolean>
+    insertPetshop(petshop:Partial<Petshop>): Promise<RegisterPetshopResponse>
     insertPet( pet:Pet):Promise<Pet | any>
     existCnpj(cnp:string):any
     seachPets(id:string) :any
