@@ -7,7 +7,7 @@ import PetshopPort from "../../ports/PetshopPort";
 export default class SeachPets{
     constructor(private petshopDb: PetshopResitoryPrisma ){}
 
-    async seach(id: string | undefined):Promise<Pet[]|string>{
+    async seach(id: string ):Promise<Pet[]|string>{
         if(!id){
             return Erros.ID_INVALIDO
         }

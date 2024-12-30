@@ -7,12 +7,12 @@ import seachPets from "../core/useCase/pets/SearchPets";
 import { Response, Request } from "express";
 export default class BuscarPetsController {
   constructor(private seachPetsNow: SeachPets){}
-   async seachPets(req: Request, res: Response): Promise<Response | any> {
+   async seachPets(req: Request, res: Response): Promise<Response| any> {
     
     try {
       const petShop: Petshop = req.petshop;
     
-      const id = petShop.id
+      const id = petShop.id!
      
  
       const arrayPets = await this.seachPetsNow.seach(id);

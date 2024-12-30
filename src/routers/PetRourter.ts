@@ -24,6 +24,6 @@ router.get("/pets", checkExistsUserAccount, async (req, res) =>  await seachPets
 router.post("/pets", checkExistsUserAccount,async (req, res) => await  insertPet.insert(req, res));
 router.put("/pets/:id", checkExistsUserAccount,async (req, res) => await editPet.edit(req, res));
 router.patch("/pets/:id", checkExistsUserAccount, async (req, res) => await alterVaccinated.Alter(req, res));
-router.delete("/pets/:id", checkExistsUserAccount, deletePet.delete);
+router.delete("/pets/:id", checkExistsUserAccount, async (req, res) => await deletePet.delete(req, res));
 
 export default router;

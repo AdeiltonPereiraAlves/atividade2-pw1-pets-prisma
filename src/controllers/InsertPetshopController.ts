@@ -1,16 +1,10 @@
 import { Response, Request } from "express";
-import RegisterPetshop, {
-  Dto,
-  RegisterPetshopResponse,
-} from "../core/useCase/Petshop/RegisterPetshop";
-import Petshop from "../core/model/Petshop";
-import { Express } from "express";
-import PetshopResitoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
-import Erros from "../core/constants/Erros";
+import RegisterPetshop from "../core/useCase/Petshop/RegisterPetshop";
+
 
 export default class PetshopController {
   constructor( private registerPetshop: RegisterPetshop ){}
- async insert(req: Request, res: Response): Promise<Response | any> {
+ async insert(req: Request, res: Response): Promise<void> {
     try {
       const { name, cnpj, pets } = req.body;
 
@@ -23,12 +17,13 @@ export default class PetshopController {
       console.log(newPetshop);
       if (newPetshop.sucess === false) {
         res.status(400).json({ erro: newPetshop.message });
-        return;
+        return
+        
       }
 
-      res.status(201).json(newPetshop.data);
+       res.status(201).json(newPetshop.data);
     } catch (error) {
-      res.status(500).json({ erro: "Erro de servidor" });
+        res.status(500).json({ erro: "Erro de servidor" });
     }
   }
 }
