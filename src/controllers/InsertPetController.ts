@@ -7,7 +7,8 @@ import Pet from "../core/model/Pet";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 import Erros from "../core/constants/Erros";
 export default class InsertPetController {
-  static async insert(req: Request, res: Response): Promise<boolean | any> {
+  constructor(private registerPet: RegisterPet){}
+  async insert(req: Request, res: Response): Promise<boolean | any> {
     try {
       const { name, type, description, deadline_vaccination } = req.body;
       const petShop: Petshop = req.petshop;
@@ -24,8 +25,8 @@ export default class InsertPetController {
      
      
     
-      const RegisterPetNow = new RegisterPet(new PetshopRepositoryPrisma());
-      const petCreated: Pet = await RegisterPetNow.execute({name , type, description, deadline_vaccination, petshopId});
+      
+      const petCreated: Pet = await this.registerPet.execute({name , type, description, deadline_vaccination, petshopId});
 
       
       res.status(201).json(petCreated);

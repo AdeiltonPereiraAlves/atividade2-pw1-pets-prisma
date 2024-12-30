@@ -2,7 +2,6 @@ import { Pet, PrismaClient } from "@prisma/client";
 import Petshop from "../../core/model/Petshop";
 import PetshopPrismaPort from "../../core/ports/PetshopPrismaPort";
 import { DtoDelete } from "../../core/useCase/pets/DeletePet";
-import { DotenvConfigOptions } from "dotenv";
 import { DtoVaccianted } from "../../core/useCase/pets/AlterVaccinated";
 import Erros from "../../core/constants/Erros";
 import prismaDb from "./Prisma";
@@ -148,6 +147,15 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("Pet não encontrado");
     }
   }
+ // criando novo metodo que retorana o id de um pet
+  async existPetId(id:string){
+    try {
+      const exist = await prismaDb.pet.findUnique({where: {id: id}})
+      return exist
+    } catch (error) {
+      throw new Error("Pet não encontrado");
+    }
+  }
   //---------------------------------------------
   async editPet(pet: any) {
     let {
@@ -157,39 +165,20 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       description,
 
       deadline_vaccination,
-
+       petshoId,
       cnpj,
     } = pet;
 
-    
+  
     try {
-      const petInfo = await prismaDb.pet.findFirst({ where: { id: id } });
-      const dadosPet = {
-        name: name ? name : petInfo?.name,
-
-        type: type ? type : petInfo?.type,
-        description: description ? description : petInfo?.description,
-
-        deadline_vaccination: deadline_vaccination
-          ? deadline_vaccination
-          : petInfo?.deadline_vaccination,
-      };
-      const petshop = await this.existCnpj(cnpj);
-
-      if (!petshop) {
-        throw new Error("erro editar pets");
-      }
-      const idPetShop = petshop.id;
-      if (!idPetShop) {
-        throw new Error("erro procurar pets");
-      }
+    
 
       const editePet = await prismaDb.pet.updateMany({
-        where: { id: id, petshopId: idPetShop },
-        data: dadosPet,
+        where: { id: id, petshopId: petshoId},
+        data: {name, type, description, deadline_vaccination},
       });
       if (editePet) {
-        const pets = await this.seachPets(idPetShop);
+        const pets = await this.seachPets(petshoId);
         const newPet = await this.seachPetId(pets, id);
         return newPet;
       }

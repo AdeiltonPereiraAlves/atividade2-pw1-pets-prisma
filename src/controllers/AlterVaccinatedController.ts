@@ -6,7 +6,8 @@ import Pet from "../core/model/Pet";
 import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 
 export default class AlterVaccinatedController {
-  static async Alter(req: Request, res: Response): Promise<Pet | any> {
+  constructor(private alterVaccinated: AlterVaccinated){}
+  async Alter(req: Request, res: Response): Promise<Pet| any> {
     try {
       const petShop: Petshop = req.petshop;
       const { id } = req.params;
@@ -34,7 +35,7 @@ export default class AlterVaccinatedController {
         vaccinated:true,
         cnpj: cnpjPetshop,
       };
-      const isVaccinated = await AlterVaccinatedNow.execute(vaccinatedPet);
+      const isVaccinated = await this.alterVaccinated.execute(vaccinatedPet);
       console.log(isVaccinated, "isvacinade");
       if (isVaccinated.length === 0) {
         res.status(404).json({ erro: "Pet Não existe" });
