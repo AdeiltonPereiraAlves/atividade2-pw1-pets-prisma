@@ -4,7 +4,6 @@ import RegisterPet from "../core/useCase/pets/RegisterPet";
 
 import Pet from "../core/model/Pet";
 
-import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 import Erros from "../core/constants/Erros";
 export default class InsertPetController {
   constructor(private registerPet: RegisterPet){}

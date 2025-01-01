@@ -8,23 +8,25 @@ import Dto from "../core/useCase/pets/EditPet";
 
 export default class EditPetController {
   constructor(private editPetNow: EditPet) {}
-  async edit(req: Request, res: Response): Promise<any> {
+  async edit(req: Request, res: Response): Promise<Pet | any > {
     try {
       const petShop: Petshop = req.petshop;
       const { id } = req.params;
       const cnpj = petShop.cnpj!;
+      const petshopId= petShop.id!;
 
       const { name, type, description, deadline_vaccination } = req.body;
       const existId = Validator.validateId(id);
-      if (!petShop.id) {
-        res.status(400).json({ error: "Petshop não informado ou inválido." });
-        return;
+      if (!petshopId) {
+         res.status(400).json({ error: "Petshop não informado ou inválido." });
+        return
       }
-      const petshoId = petShop.id;
+     
 
       if (!existId) {
         res.status(400).json({ error: "ID do pet Inválido." });
-        return;
+        return
+        
       }
       console.log(id, "id no controler");
 
@@ -34,18 +36,13 @@ export default class EditPetController {
         type,
         description,
         deadline_vaccination,
-        petshoId,
+        petshopId,
         cnpj,
       });
 
       console.log(petEdited, "Pet editado");
 
-      if (petEdited.length === 0) {
-        res
-          .status(404)
-          .json({ error: "Pet não encontrado ou não foi possível editar." });
-        return;
-      }
+   
 
       res.status(200).json(petEdited);
     } catch (error: any) {

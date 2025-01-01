@@ -37,7 +37,7 @@ export default class RegisterPetshop implements UseCase<Dto, RegisterPetshopResp
     const isTrue = await this.petshopDb.existCnpj(petshop.cnpj);
     console.log(isTrue)
     if (!isTrue) {
-    //   petshop.pets ? [...petshop.pets] : [];
+   
       const newPetshop = await this.petshopDb.insertPetshop(petshop);
       return {sucess: true, message: "Petshop cadastrado com sucesso", data: newPetshop}
     }

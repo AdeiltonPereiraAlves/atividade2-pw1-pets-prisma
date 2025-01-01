@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import Validador from "../utils/Validator";
-import PetshopRepository from "../../adapters/db/PetshopRepository";
+
 import PetshopRepositoryPrisma from "../../adapters/db/PetshopRepositoryPrisma";
 import Validator from "../utils/Validator";
 import Erros from "../constants/Erros";

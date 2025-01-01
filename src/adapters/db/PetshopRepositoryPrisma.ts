@@ -6,9 +6,7 @@ import { DtoVaccianted } from "../../core/useCase/pets/AlterVaccinated";
 import Erros from "../../core/constants/Erros";
 import prismaDb from "./Prisma";
 export default class PetshopResitoryPrisma implements PetshopPrismaPort {
-  
-  constructor() {
-  }
+  constructor() {}
   async deletePet(petDelet: DtoDelete): Promise<Pet[] | any> {
     try {
       const { id, cnpj } = petDelet;
@@ -102,12 +100,15 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro ao inserir pet.");
     }
   }
-  async existCnpj(cnpj: string): Promise<boolean | any> {
+  async existCnpj(cnpj: string): Promise<Petshop> {
     try {
       const isTrue = await prismaDb.petshop.findUnique({
         where: { cnpj: cnpj },
       });
       console.log(isTrue, "Existte cnpj");
+      if(!isTrue){
+        throw new Error("erro ")
+      }
       return isTrue;
     } catch (error) {
       throw new Error("erro no existcnpj");
@@ -115,29 +116,20 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
   }
 
   async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
-    let { name, cnpj} = petshop as any ;
+    let { name, cnpj } = petshop as any;
     console.log(name, cnpj, "name e cnpj no banco");
-  
-    const petShop:Petshop = await prismaDb.petshop.create({
-      data: { name, cnpj},
+
+    const petShop: Petshop = await prismaDb.petshop.create({
+      data: { name, cnpj },
     });
-    console.log(petShop,"petshop banco")
+    console.log(petShop, "petshop banco");
     return petShop;
   }
 
-  async seachPets(id: string) {
-    try {
-      const pets = await prismaDb.pet.findMany({
-        where: { petshopId: id },
-      });
-
-      console.log(pets);
-
-      return pets;
-    } catch (error) {
-      console.log(error);
-      throw new Error("erro procurar pets");
-    }
+  async seachPets(id: string): Promise<Pet[]> {
+    return await prismaDb.pet.findMany({
+      where: { petshopId: id },
+    });
   }
   async seachPetId(pets: Pet[], id: string) {
     try {
@@ -147,39 +139,38 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("Pet não encontrado");
     }
   }
- // criando novo metodo que retorana o id de um pet
-  async existPetId(id:string){
+  // criando novo metodo que retorana o id de um pet
+  async existPetId(id: string) {
     try {
-      const exist = await prismaDb.pet.findUnique({where: {id: id}})
-      return exist
+      const exist = await prismaDb.pet.findUnique({ where: { id: id } });
+      return exist;
     } catch (error) {
       throw new Error("Pet não encontrado");
     }
   }
   //---------------------------------------------
-  async editPet(pet: any) {
-    let {
-      id,
-      name,
-      type,
-      description,
-
-      deadline_vaccination,
-       petshoId,
-      cnpj,
-    } = pet;
-
-  
+  async editPet(pet: Partial<Pet>): Promise<Pet | any> {
     try {
-    
+      let {
+        id,
+        name,
+        type,
+        description,
 
+        deadline_vaccination,
+        petshopId,
+      } = pet;
+      console.log(id, petshopId, "petshopId e id");
       const editePet = await prismaDb.pet.updateMany({
-        where: { id: id, petshopId: petshoId},
-        data: {name, type, description, deadline_vaccination},
+        where: { id: id, petshopId: petshopId },
+        data: { name, type, description, deadline_vaccination },
       });
+      console.log(editePet, "Edite pet");
       if (editePet) {
-        const pets = await this.seachPets(petshoId);
-        const newPet = await this.seachPetId(pets, id);
+        const pets = await this.seachPets(petshopId!);
+        console.log(pets, "pets");
+        const newPet = await this.seachPetId(pets, id!);
+        console.log(newPet, "new pet");
         return newPet;
       }
     } catch (error) {

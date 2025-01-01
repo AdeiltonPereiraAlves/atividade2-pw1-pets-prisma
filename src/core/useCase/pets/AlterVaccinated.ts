@@ -10,7 +10,7 @@ export type DtoVaccianted = {
 };
 export default class AlterVaccinated implements UseCase<DtoVaccianted, Pet> {
   constructor(private petshopDb: PetshopPrismaPort) {}
-  async execute(dto: DtoVaccianted): Promise<Pet | any> {
+  async execute(dto: DtoVaccianted): Promise<Pet> {
     const petVaccinated = {
       id: dto.id,
       vaccinated: dto.vaccinated,

@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import RegisterPetshop from "../core/useCase/Petshop/RegisterPetshop";
+import Petshop from "../core/model/Petshop";
 
 
 export default class PetshopController {
