@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import RegisterPetshop from "../core/useCase/Petshop/RegisterPetshop";
+import RegisterPetshop, { RegisterPetshopResponse } from "../core/useCase/Petshop/RegisterPetshop";
 import Petshop from "../core/model/Petshop";
 
 
@@ -10,21 +10,21 @@ export default class PetshopController {
       const { name, cnpj, pets } = req.body;
 
      
-      const newPetshop: any = await this.registerPetshop.execute({
+      const newPetshop:RegisterPetshopResponse = await this.registerPetshop.execute({
         name,
         cnpj,
         pets,
       });
-      console.log(newPetshop);
+      console.log(newPetshop, "newPetshop");
       if (newPetshop.sucess === false) {
-        res.status(400).json({ erro: newPetshop.message });
+        res.status(400).json({ error: newPetshop.message });
         return
         
       }
-
+      
        res.status(201).json(newPetshop.data);
     } catch (error) {
-        res.status(500).json({ erro: "Erro de servidor" });
+        res.status(500).json({ error: "Erro de servidor" });
     }
   }
 }

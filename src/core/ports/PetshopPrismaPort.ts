@@ -3,9 +3,9 @@ import Petshop from "../model/Petshop";
 import { RegisterPetshopResponse } from "../useCase/Petshop/RegisterPetshop";
 
 export default interface PetshopPrismaPort{
-    insertPetshop(petshop:Partial<Petshop>): Promise<void>
+    insertPetshop(petshop:Partial<Petshop>): Promise<Petshop>
     insertPet( pet:Partial<Pet>):Promise<Pet >
-    existCnpj(cnp:string):Promise<Petshop>
+    existCnpj(cnp:string):Promise<Petshop| null>
     seachPets(id:string):Promise<Pet[]>
     editPet(pet:Partial<Pet>):Promise<any | Pet>
     alterVaccinated(vacccinatedPert:any):Promise<Pet>;

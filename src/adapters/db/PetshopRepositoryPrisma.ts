@@ -100,29 +100,29 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       throw new Error("erro ao inserir pet.");
     }
   }
-  async existCnpj(cnpj: string): Promise<Petshop> {
+  async existCnpj(cnpj: string): Promise<Petshop| null> {
     try {
       const isTrue = await prismaDb.petshop.findUnique({
         where: { cnpj: cnpj },
       });
-      console.log(isTrue, "Existte cnpj");
-      if(!isTrue){
-        throw new Error("erro ")
-      }
+    
+     
       return isTrue;
     } catch (error) {
-      throw new Error("erro no existcnpj");
+      throw new Error("erro no banco");
     }
   }
 
-  async insertPetshop(petshop: Petshop): Promise<Petshop | any> {
+
+
+  async insertPetshop(petshop: Petshop): Promise<Petshop > {
     let { name, cnpj } = petshop as any;
     console.log(name, cnpj, "name e cnpj no banco");
 
     const petShop: Petshop = await prismaDb.petshop.create({
       data: { name, cnpj },
     });
-    console.log(petShop, "petshop banco");
+  
     return petShop;
   }
 
@@ -131,6 +131,9 @@ export default class PetshopResitoryPrisma implements PetshopPrismaPort {
       where: { petshopId: id },
     });
   }
+
+
+
   async seachPetId(pets: Pet[], id: string) {
     try {
       const petFound = pets.filter((pet: Pet) => pet.id === id);

@@ -23,7 +23,7 @@ async function checkExistsUserAccount(
     const validateCnpj = Validator.validateCnpj(cnpj)
     
     if (!validateCnpj) {
-      return res.status(400).json({ erro: Erros.CNPJ_INVALIDO });
+      return res.status(400).json({ error: Erros.CNPJ_INVALIDO });
     }
 
     const exitsPetshop = new PetshopRepositoryPrisma();
@@ -35,7 +35,7 @@ async function checkExistsUserAccount(
 
       return next();
     } else {
-      res.status(400).json({ erro: Erros.CNPJ_NAO_EXISTE });
+      res.status(400).json({ error: Erros.CNPJ_NAO_EXISTE });
     }
   } catch (error) {
     return res.status(403).json({ mensagem: "Erro interno do servidor" });

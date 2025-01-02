@@ -1,6 +1,5 @@
-import PetshopRepositoryPrisma from "../adapters/db/PetshopRepositoryPrisma";
 import Erros from "../core/constants/Erros";
-import Pet from "../core/model/Pet";
+
 import Petshop from "../core/model/Petshop";
 import SeachPets, { petsFoundsResponse } from "../core/useCase/pets/SearchPets";
 
@@ -15,7 +14,7 @@ export default class BuscarPetsController {
       const id = petShop.id!
      
  
-      const arrayPets:petsFoundsResponse = await this.seachPetsNow.seach(id);
+      const arrayPets:petsFoundsResponse = await this.seachPetsNow.execute({id});
       console.log(arrayPets)
       if (arrayPets.dados.length === 0) {
         res.status(404).json(Erros.PETS_NAO_ENCOTRADOS);
